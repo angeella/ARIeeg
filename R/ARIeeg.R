@@ -1,7 +1,7 @@
 #' @title ARI Permutation-based for EEG data
 #' @description Performs ARI using permutation local test for EEG data
-#' @usage ARIpermCT(model, alpha, summary_stat, silent, family, delta, ct)
-#' @param model clusterMass model from permuco4brain package
+#' @usage ARIpermCT(data, alpha, summary_stat, silent, family, dist, ct, time, ...)
+#' @param data data
 #' @param alpha alpha level
 #' @param summary_stat Choose among "max", "center-of-mass"
 #' @param silent FALSE by default.
@@ -9,13 +9,57 @@
 #' @param delta do you want to consider at least delta size set?
 #' @param B number of permutation, default 1000
 #' @param ct set of thresholds
+#' @param time time signal to select, default NULL, i.e. no selection
+#' @param dist an double defining the maximal distance for adjacency of two channels
+#' @param formula formula object defining the design of the model.
+#' @param var variables to use in the right part of the formula
+#' @param B number of permutation
 #' @author Angela Andreella
 #' @return Returns a list with the following objects: discoveries number of discoveries in the set selected, cluster id, maximum test statistic and relative coordinates
 #' @export
 #' @importFrom plyr laply
 #' 
-ARIeeg <- function(model, alpha = 0.1, family = "Simes", delta = 0, ct = c(0,1), alternative = "two.sided"){
-  Rcpp::sourceCpp("C:/Users/Angela Andreella/Documents/Rpackage/ARIpermutation/src/rowSortC.cpp")
+ARIeeg <- function(data, alpha = 0.1, family = "Simes", delta = 0, ct = c(0,1), alternative = "two.sided",time = NULL,dist = 50,formula,var, B = 5000,...){
+  
+  if(!is_eeg_lst(data)){
+    data <- utilsTOlst(data, ...)
+  }
+  
+  signal <- 
+    data%>%
+    signal_tbl()%>%
+    group_by(.id)%>%
+    nest()%>%
+    mutate(data = map(data,~as.matrix(.x[-1])))%>%
+    pull(data)%>%
+    invoke(abind::abind,.,along = 3)%>%
+    aperm(c(3,1,2))
+  
+  if(!is.null(time)){signal <- signal[,time,]}
+  
+  design <- 
+    segments_tbl(data)%>%
+    select(sapply(var, function(x) eval(as.name(paste(x)))))
+
+  graph <- position_to_graph(channels_tbl(data), name = .channel, delta = dist,
+                             x = .x, y = .y, z = .z)
+  
+  #formula <- signal ~ condition + Error(.subj/(condition))
+  
+  model <- permuco4brain::brainperm(formula = formula,
+                                    data = design,
+                                    graph = graph,
+                                    np = B,
+                                    method = NULL,
+                                    type = "permutation",
+                                    test = "fisher",
+                                    aggr_FUN = NULL,
+                                    threshold = NULL,
+                                    multcomp = "clustermass",
+                                    effect = NULL,
+                                    return_distribution = TRUE)
+  
+  
   Test <- model$multiple_comparison$stimuli$uncorrected$distribution
   dim(Test) <- c(dim(Test)[1], dim(Test)[2]*dim(Test)[3])
   pvalues <- switch(alternative, 
@@ -47,9 +91,9 @@ ARIeeg <- function(model, alpha = 0.1, family = "Simes", delta = 0, ct = c(0,1),
     #Error if I put pvalues[,mask] instead of pvalues in SingleStepCT
     #perm <- SingleStepCT(pvalues = pvalues,ct =ct, ix =as.vector(which(ix[mask])), alpha = alpha, shift = shift, family = 'Simes', lambda = lambda)
     #perm <- discoveriesPerm(praw = praw, ix = ix[mask], cvh = cvh)
-    c(summary_perm_eeg(cv = cvOpt,ix=ix,pvalues = pvalues),
-             summary_cluster_eeg(i,model)
-    )
+    summary_cluster_eeg(clusters = i,model = model, 
+                        cv = cvOpt,ix=ix,pvalues = pvalues)
+  
   })
   
   out_d <- t(as.data.frame(out))
@@ -57,27 +101,4 @@ ARIeeg <- function(model, alpha = 0.1, family = "Simes", delta = 0, ct = c(0,1),
   out_d
 }
 
-summary_perm_eeg <- function(cv,ix,pvalues){
-  #idix <- which(ix)
-  p <- pvalues[1,ix]
-  Total = length(p)
-  False_Null= dI(ix = ix,cv = cv,praw = pvalues[1,])
-  True_Null=Total - False_Null
-  Active_Proportion= False_Null / Total
-  out = c(Size=Total,FalseNull=False_Null,TrueNull=True_Null,ActiveProp=Active_Proportion)
-  out
-}
 
-summary_cluster_eeg <- function(clusters,model){
-
-  info <- model$multiple_comparison$stimuli$clustermass$cluster
-  clustermass <- model$multiple_comparison$stimuli$clustermass$cluster$clustermass[clusters]
-  pvalue <- model$multiple_comparison$stimuli$clustermass$cluster$pvalue[clusters]
-  csize <- model$multiple_comparison$stimuli$clustermass$cluster$csize[clusters]
-  #membership <- toString(names(model$multiple_comparison[[1]]$clustermass$cluster$membership[model$multiple_comparison[[1]]$clustermass$cluster$membership ==clusters]))
-  #out=c(clustermass)
-  #names(out)=c("clustermass")
-  out=c(clustermass,pvalue,csize)
-  names(out)=c("clustermass", "pvalue", "csize")
-  out
-}

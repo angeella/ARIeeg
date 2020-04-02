@@ -1,0 +1,238 @@
+---
+title: "eeg_lst"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{eeg_lst}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(ARIeeg)
+system.file("extdata", "data_eeg_emotion.RData", package = "ARIeeg")
+```
+
+Convert data 
+
+```{r}
+data = utilsTOlst(data=dati)
+```
+
+Check:
+
+```{r}
+is_eeg_lst(data)
+```
+
+View data:
+
+```{r}
+channels_tbl(data)
+signal_tbl(data)
+events_tbl(data)
+segments_tbl(data)
+```
+
+Plot data:
+
+```{r}
+plot(data) 
+```
+
+Drop off final 5 channels: 
+
+```{r}
+chan_to_rm <- c("RM"  ,  "EOGvo" ,"EOGvu"
+                , "EOGhl", "EOGhr")
+data <- 
+  data %>%
+  select(-one_of(chan_to_rm))
+```
+
+Segments data and select two conditions:
+
+```{r}
+data_seg <- data %>%
+  eeg_segment(.description %in% c(1,2,3,4,5),
+              lim = c(min(dati$timings$time), max(dati$timings$time))
+  ) %>% eeg_baseline()  %>%
+  mutate(
+    condition =
+      description
+  ) %>%
+  select(-type)
+```
+
+Plot of all the ERP of the O1 electrode:
+
+```{r}
+data_seg %>%
+  select(O1) %>%
+  ggplot(aes(x = .time, y = .value)) +
+  geom_line()
+```
+
+Plot ERP of each subject (average across condition):
+
+```{r}
+data_seg %>%
+  select(O1) %>%
+  ggplot(aes(x = .time, y = .value)) +
+  geom_line(aes(group = .subj))  +
+stat_summary(
+  fun = "mean", geom = "line", alpha = 1, size = 1.5,
+  aes(color = "red"),show.legend = FALSE
+) 
+```
+
+Plot ERP of condition (average across subject):
+
+```{r}
+
+data_seg %>%
+  select(O1) %>%
+  ggplot(aes(x = .time, y = .value)) +
+  geom_line(alpha = 0.1,aes(group = condition))  +
+  stat_summary(
+    fun = "mean", geom = "line", alpha = 1, size = 1.5,
+    aes(color = condition),show.legend = FALSE
+  ) 
+```
+
+All conditions:
+
+```{r}
+data %>%
+  eeg_segment(.description %in% c(1,2,3,4,5),
+              lim = c(min(dati$timings$time), max(dati$timings$time))
+  ) %>% eeg_baseline() %>%
+  mutate(
+    condition =
+      description
+  ) %>%
+  select(-type) %>%
+  select("T7", "T8") %>%
+  ggplot(aes(x = .time, y = .value)) +
+  geom_line(aes(group = condition))  +
+  stat_summary(
+    fun = "mean", geom = "line", alpha = 1, size = 1.5,
+    aes(color = condition),show.legend = TRUE
+  ) +
+  facet_wrap(~.key) +
+  geom_vline(xintercept = 0, linetype = "dashed") +
+  geom_vline(xintercept = .17, linetype = "dotted") +
+  theme(legend.position = "bottom")
+```
+
+Other plots:
+
+```{r}
+data_seg %>%
+  select(O1, O2, PO7, PO8) %>%
+  ggplot(aes(x = .time, y = .value)) +
+  geom_line(alpha = .1, aes(group = .id, color = condition)) +
+  stat_summary(
+    fun = "mean", geom = "line", alpha = 1, size = 1.5,
+    aes(color = condition)
+  ) +
+  facet_wrap(~.key) +
+  geom_vline(xintercept = 0, linetype = "dashed") +
+  geom_vline(xintercept = .17, linetype = "dotted") +
+  theme(legend.position = "bottom")
+
+```
+
+```{r}
+
+data_seg %>%
+  transmute(
+    Occipital = chs_mean(O1, O2, na.rm = TRUE),
+    Parietal = chs_mean(P3, P4, P7, P8, Pz, na.rm = TRUE)
+  ) %>%
+  ggplot(aes(x = .time, y = .value)) +
+  geom_line(alpha = .1, aes(group = .id, color = condition)) +
+  stat_summary(
+    fun.y = "mean", geom = "line", alpha = 1, size = 1,
+    aes(color = condition)
+  ) +
+  facet_wrap(~.key) +
+  theme(legend.position = "bottom")
+```
+
+```{r}
+ERP_data <- data_seg %>%
+  group_by(.sample, condition) %>%
+  summarize_at(channel_names(.), mean, na.rm = TRUE)
+
+
+
+ERP_plot <- ERP_data %>%
+  ggplot(aes(x = .time, y = .value)) +
+  geom_line(aes(color = condition)) +
+  facet_wrap(~.key) +
+  theme(legend.position = "bottom") +
+  ggtitle("ERPs for happy vs neutral") +
+  theme_eeguana()
+
+ERP_plot %>% plot_in_layout()
+
+```
+
+```{r}
+data_seg %>%
+  filter(between(as_time(.sample, unit = "s"), .1, .2)) %>%
+  group_by(condition) %>%
+  summarize_at(channel_names(.), mean, na.rm = TRUE) %>%
+  plot_topo() +
+  annotate_head() +
+  geom_contour() +
+  geom_text(colour = "black") +
+  facet_grid(~condition)
+
+```
+
+```{r}
+df <- data_seg %>%
+  select(O1, O2, P7, P8) %>%
+  as_tibble() %>%
+  # We can use regular dplyr functions now
+  group_by(.key, .time) %>%
+  summarize(
+    `t-value` = t.test(
+      .value[condition == "happy"],
+      .value[condition == "neutral"]
+    )$statistic
+  )
+
+
+ggplot(df, aes(x = .time, y = `t-value`)) + geom_line() +
+  facet_wrap(~.key)
+
+```
+
+```{r}
+
+faces_seg_t <-
+  data_seg %>%
+  select(O1, O2, P7, P8) %>%
+  group_by(.sample) %>%
+  summarize_at(channel_names(.), list(t =  ~t.test(
+    .[condition == "happy"],
+    .[condition == "neutral"]
+  )$statistic))
+
+faces_seg_t %>%
+  ggplot(aes(x = .time, y = .value)) +
+  geom_line(alpha = .1, aes(group = .id)) +
+  stat_summary(fun.y = "mean", geom = "line", alpha = 1, size = 1) +
+  facet_wrap(~.key) +
+  theme(legend.position = "bottom")
+```
+

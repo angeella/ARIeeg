@@ -1,12 +1,5 @@
 #permuco4brain-with-eeguana
-library(tidyverse)
-library(eeguana)
-library(permuco)
-library(permuco4brain)
-library(igraph)
-library(tidyr)
-library(purrr)
-library(ARIpermutation)
+
 load("data_eeg_emotion.RData")
 load("data_segs_some.RData")
 
