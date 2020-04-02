@@ -18,6 +18,13 @@
 #' @return Returns a list with the following objects: discoveries number of discoveries in the set selected, cluster id, maximum test statistic and relative coordinates
 #' @export
 #' @importFrom plyr laply
+#' @importFrom tidyr nest
+#' @importFrom abind abind
+#' @importFrom dplyr group_by
+#' @importFrom signal_tbl eeguana
+#' @importFrom dplyr mutate
+#' @importFrom purrr  invoke
+#' @importFrom eeguana segments_tbl
 #' 
 ARIeeg <- function(data, alpha = 0.1, family = "Simes", delta = 0, ct = c(0,1), alternative = "two.sided",time = NULL,dist = 50,formula,var, B = 5000,...){
   
@@ -25,6 +32,7 @@ ARIeeg <- function(data, alpha = 0.1, family = "Simes", delta = 0, ct = c(0,1), 
     data <- utilsTOlst(data, ...)
   }
   
+  #Data from normal or segmented?? <-
   signal <- 
     data%>%
     signal_tbl()%>%
@@ -32,14 +40,14 @@ ARIeeg <- function(data, alpha = 0.1, family = "Simes", delta = 0, ct = c(0,1), 
     nest()%>%
     mutate(data = map(data,~as.matrix(.x[-1])))%>%
     pull(data)%>%
-    invoke(abind::abind,.,along = 3)%>%
+    invoke(abind,.,along = 3)%>%
     aperm(c(3,1,2))
   
   if(!is.null(time)){signal <- signal[,time,]}
   
   design <- 
     segments_tbl(data)%>%
-    select(sapply(var, function(x) eval(as.name(paste(x)))))
+    select(var)
 
   graph <- position_to_graph(channels_tbl(data), name = .channel, delta = dist,
                              x = .x, y = .y, z = .z)
