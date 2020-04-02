@@ -101,8 +101,11 @@ utilsTOlst <- function(data, reference = "", unit = "microvolt", resolution = 1)
                                 .recording = data$epochs$recording,
                                 #description = dati$events$event_type,
                                 segment = rep(1,length(data$epochs$recording)),
-                                .subj = ifelse(!is.null(data$events$subj),data$events$subj, NA)
                            )
+  if(!is.null(data$events$subj)){
+    segments_tbl$.subj <- data$events$subj}
+  
+
   #type = rep("Stimulus", length(dati$epochs$recording)))
   
   #segments_tbl <- validate_segments(segments_tbl)
