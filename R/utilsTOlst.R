@@ -7,15 +7,15 @@
 #' @param resolution resolution
 #' @author Angela Andreella
 #' @return Returns an eeg lst from eeguana package
-#' @importFrom sample_int eeguana
-#' @importFrom setnames data.table
-#' @importFrom setcolorder data.table
-#' @importFrom setattr data.table
-#' @importFrom setkey data.table
+#' @importFrom eeguana sample_int
+#' @importFrom data.table setnames
+#' @importFrom data.table setcolorder
+#' @importFrom data.table setattr
+#' @importFrom data.table setkey
 #' @importFrom data.table data.table
 #' @importFrom dplyr tibble 
-#' @importFrom validate_segments eeguana 
-#' @importFrom eeg_lst eeguana 
+#' @importFrom eeguana validate_segments
+#' @importFrom eeguana eeg_lst
 #' 
 
 utilsTOlst <- function(data, reference = "", unit = "microvolt", resolution = 1){

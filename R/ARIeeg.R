@@ -26,6 +26,10 @@
 #' @importFrom dplyr mutate
 #' @importFrom purrr  invoke
 #' @importFrom eeguana segments_tbl
+#' @importFrom ARIpermutation lambdaOpt
+#' @importFrom ARIpermutation cv
+#' @importFrom  permuco4brain brainperm
+#' @importFrom igraph position_to_graph
 #' 
 ARIeeg <- function(data, alpha = 0.1, family = "Simes", delta = 0, ct = c(0,1), alternative = "two.sided",timeS = NULL,dist = 50,formula,var, B = 5000,effect = "condition",...){
   
@@ -55,7 +59,7 @@ ARIeeg <- function(data, alpha = 0.1, family = "Simes", delta = 0, ct = c(0,1), 
   
   #formula <- signal ~ condition + Error(.subj/(condition))
   
-  model <- permuco4brain::brainperm(formula = formula,
+  model <- brainperm(formula = formula,
                                     data = design,
                                     graph = graph,
                                     np = B,

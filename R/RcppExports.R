@@ -17,3 +17,7 @@ rcpparma_bothproducts <- function(x) {
     .Call(`_ARIeeg_rcpparma_bothproducts`, x)
 }
 
+rowSortC <- function(X) {
+    .Call(`_ARIeeg_rowSortC`, X)
+}
+

@@ -49,12 +49,24 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// rowSortC
+arma::mat rowSortC(arma::mat X);
+RcppExport SEXP _ARIeeg_rowSortC(SEXP XSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    rcpp_result_gen = Rcpp::wrap(rowSortC(X));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_ARIeeg_rcpparma_hello_world", (DL_FUNC) &_ARIeeg_rcpparma_hello_world, 0},
     {"_ARIeeg_rcpparma_outerproduct", (DL_FUNC) &_ARIeeg_rcpparma_outerproduct, 1},
     {"_ARIeeg_rcpparma_innerproduct", (DL_FUNC) &_ARIeeg_rcpparma_innerproduct, 1},
     {"_ARIeeg_rcpparma_bothproducts", (DL_FUNC) &_ARIeeg_rcpparma_bothproducts, 1},
+    {"_ARIeeg_rowSortC", (DL_FUNC) &_ARIeeg_rowSortC, 1},
     {NULL, NULL, 0}
 };
 

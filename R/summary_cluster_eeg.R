@@ -19,14 +19,15 @@ summary_cluster_eeg <- function(clusters,model,cv,ix,pvalues){
   False_Null= dI(ix = ix,cv = cv,praw = pvalues[1,])
   True_Null=Total - False_Null
   Active_Proportion= False_Null / Total
-  info <- model$multiple_comparison$stimuli$clustermass$cluster
-  clustermass <- model$multiple_comparison$stimuli$clustermass$cluster$clustermass[clusters]
-  pvalue <- model$multiple_comparison$stimuli$clustermass$cluster$pvalue[clusters]
+  #info <- eval(parse(text=paste0("model$multiple_comparison$", effect, "$clustermass$cluster")))
+  clustermass <- eval(parse(text=paste0("model$multiple_comparison$", effect, "$clustermass$cluster$clustermass[clusters]")))
+  pvalue <- eval(parse(text=paste0("model$multiple_comparison$", effect, "$clustermass$cluster$pvalue[clusters]")))
+
   #csize <- model$multiple_comparison$stimuli$clustermass$cluster$csize[clusters]
   #membership <- toString(names(model$multiple_comparison[[1]]$clustermass$cluster$membership[model$multiple_comparison[[1]]$clustermass$cluster$membership ==clusters]))
   #out=c(clustermass)
   #names(out)=c("clustermass")
-  out=c(info,total, clustermass,pvalue,False_Null,True_Null,Active_Proportion)
-  names(out)=c("info","Total", "clustermass", "pvalue", "False Null", "True Null", "Active Proportion" )
+  out=c(clusters,Total, clustermass,pvalue,False_Null,True_Null,Active_Proportion)
+  names(out)=c("ID","Total", "clustermass", "pvalue", "False Null", "True Null", "Active Proportion" )
   out
 }
