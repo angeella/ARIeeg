@@ -60,7 +60,7 @@ Segments data and select two conditions:
 
 ```{r}
 data_seg <- data %>%
-  eeg_segment(.description %in% c(1,2,3,4,5),
+  eeg_segment(.description %in% c(3,5),
               lim = c(min(dati$timings$time), max(dati$timings$time))
   ) %>% eeg_baseline()  %>%
   mutate(
