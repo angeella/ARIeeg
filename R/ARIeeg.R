@@ -84,8 +84,14 @@ ARIeeg <- function(data, alpha = 0.1, family = "Simes", delta = 0, ct = c(0,1), 
                     "two.sided" = 2*(pnorm(abs(test_obs), lower.tail=FALSE)),
                     "greater" = pnorm(test_obs, lower.tail=FALSE),
                     "less" = 1-pnorm(test_obs, lower.tail=FALSE))
-
-  pvalues <-rbind(pvalues_obs,pvalues)
+  TT <- rbind(test_obs,Test)
+  pvalues <- switch(alternative, 
+               "two.sided" =  matrixStats::colRanks(-abs(TT)) / (nrow(TT)+1),
+               "greater" = matrixStats::colRanks(-TT) / (nrow(TT)+1),
+               "less" = matrixStats::colRanks(TT) / (nrow(TT)+1))
+  
+  
+  pvalues <-t(pvalues)
   #pvalues <- pvalues[,which(model$multiple_comparison[[1]]$clustermass$data$cluster_id!=0)]
   pvalues_ord <- rowSortC(pvalues)
   lambda <- lambdaOpt(pvalues = pvalues_ord, family = family, ct = ct, alpha = alpha, delta = delta) 
@@ -97,6 +103,7 @@ ARIeeg <- function(data, alpha = 0.1, family = "Simes", delta = 0, ct = c(0,1), 
   #clusters <- c(1:model$multiple_comparison[[1]]$clustermass$cluster$no)[which(model$multiple_comparison[[1]]$clustermass$cluster$pvalue<=0.1)]
   #clusters <- which(model$multiple_comparison[[1]]$clustermass$cluster$pvalue<=0.1)
   clusters <- c(1:eval(parse(text=paste0("model$multiple_comparison$", effect, "$clustermass$cluster$no"))))
+  hom <-hommel(pvalues[1,])
   
   out=lapply(clusters,function(i){
     ix= which(clstr_id == i)
@@ -108,6 +115,8 @@ ARIeeg <- function(data, alpha = 0.1, family = "Simes", delta = 0, ct = c(0,1), 
     #perm <- discoveriesPerm(praw = praw, ix = ix[mask], cvh = cvh)
     summary_cluster_eeg(clusters = i,model = model, 
                         cv = cvOpt,ix=ix,pvalues = pvalues)
+    summary_hommel_eeg(hommel = hom,ix=ix, alpha = 0.1, clusters = i)
+    
   
   })
   
