@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 library(ARIeeg)
-system.file("extdata", "data_eeg_emotion.RData", package = "ARIeeg")
+load(system.file("extdata", "data_eeg_emotion.RData", package = "ARIeeg"))
 ```
 
 Convert data 
@@ -67,7 +67,7 @@ data_seg <- data %>%
     condition =
       description
   ) %>%
-  select(-type)
+  select(-c(type,description))
 ```
 
 Plot of all the ERP of the O1 electrode:
