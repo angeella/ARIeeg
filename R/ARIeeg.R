@@ -1,15 +1,14 @@
 #' @title Parametric ARI for EEG data
 #' @description Performs ARI using permutation local test for EEG data
-#' @usage ARIeeg(data, alpha,timeS,dist,formula,var, B, effect,...)
+#' @usage ARIeeg(data, alpha,alternative,timeS,dist,formula,variable, B, effect,...)
 #' @param data data
 #' @param alpha alpha level
 #' @param alternative alternative hypothesis
-#' @param B number of permutation, default 1000
 #' @param timeS time signal to select, default NULL, i.e. no selection
 #' @param dist an double defining the maximal distance for adjacency of two channels
 #' @param formula formula object defining the design of the model.
 #' @param variable variables to use in the right part of the formula
-#' @param B number of permutation
+#' @param B number of permutation, default 5000
 #' @param effect effect of interest where apply ARI
 #' @author Angela Andreella
 #' @return Returns a data.frame with number of true discoveries for each cluster

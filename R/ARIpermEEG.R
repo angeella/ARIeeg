@@ -1,18 +1,17 @@
 #' @title ARI Permutation-based for EEG data
 #' @description Performs ARI using permutation local test for EEG data
-#' @usage ARIpermEEG(data, alpha, family, dist, ct, timeS, dist, formula, var, B, effect, ...)
+#' @usage ARIpermEEG(data, alpha, family, delta, ct, alternative, timeS, dist, formula, variable, B, effect, ...)
 #' @param data data
-#' @param alternative alternative hypothesis
 #' @param alpha alpha level
 #' @param family which family for the confidence envelope? simes, finner, beta or higher.criticism. default is simes
 #' @param delta do you want to consider at least delta size set?
-#' @param B number of permutation, default 1000
 #' @param ct set of thresholds
+#' @param alternative alternative hypothesis
 #' @param timeS time signal to select, default NULL, i.e. no selection
 #' @param dist an double defining the maximal distance for adjacency of two channels
 #' @param formula formula object defining the design of the model.
-#' @param var variables to use in the right part of the formula
-#' @param B number of permutation
+#' @param variable variables to use in the right part of the formula
+#' @param B number of permutation, default 5000
 #' @param effect effect of interest where apply ARI
 #' @author Angela Andreella
 #' @return Returns a data.frame with number of true discoveries for each cluster
@@ -30,7 +29,7 @@
 #' @importFrom  permuco4brain brainperm
 #' @importFrom igraph position_to_graph
 #' 
-ARIpermEEG <- function(data, alpha = 0.1, family = "Simes", delta = 0, ct = c(0,1), alternative = "two.sided",timeS = NULL,dist = 50,formula,var, B = 5000,effect = "condition",...){
+ARIpermEEG <- function(data, alpha = 0.1, family = "Simes", delta = 0, ct = c(0,1), alternative = "two.sided",timeS = NULL,dist = 50,formula,variable, B = 5000,effect = "condition",...){
   
   if(!is_eeg_lst(data)){
     data <- utilsTOlst(data, ...)
