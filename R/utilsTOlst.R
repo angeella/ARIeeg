@@ -1,6 +1,6 @@
 #' @title Create eeg_lst object from eegUtils object
 #' @description uilds an eeg_lst object composed of two data.table`objects and one tibble. All three are linked by a unique identifier .id. Amplitude values and timestamps appear in the signal table. Triggers, blinks, artifact rejection markings, and other events logged by the EEG recording software appear in the events table. Segment information and recording IDs appear in the segments tibble.
-#' @usage utilsTOlst(data, reference = "", unit = "microvolt", resolution = 1)
+#' @usage utilsTOlst(data, reference, unit, resolution)
 #' @param data eegUtils data
 #' @param reference reference
 #' @param unit unit
@@ -14,9 +14,9 @@
 #' @importFrom data.table setkey
 #' @importFrom data.table data.table
 #' @importFrom dplyr tibble 
-#' @importFrom eeguana validate_segments
 #' @importFrom eeguana eeg_lst
-#' 
+#' @importFrom eeguana channel_dbl
+#' @importFrom magrittr %>%
 
 utilsTOlst <- function(data, reference = "", unit = "microvolt", resolution = 1){
   
@@ -54,7 +54,7 @@ utilsTOlst <- function(data, reference = "", unit = "microvolt", resolution = 1)
   #' displays only the timestamps where logged events began. 
   #TODO!!!!!
   #.signal <- data.table(.id,.sample,sapply(nam, function(x) assign(x,get(x))))
-  .signal <- data.table::data.table(.id,.sample,Fp1,Fp2,F3,F4,F7,F8,FC1,FC2,C3,C4,T7,T8,
+  .signal <- data.table(.id,.sample,Fp1,Fp2,F3,F4,F7,F8,FC1,FC2,C3,C4,T7,T8,
                                     CP1, CP2 ,P7  ,  P8  ,  P3  ,  P4,   PO7 ,  PO8 , O1 , O2  ,  Fz  ,  FCz , 
                                     Cz, CPz,Pz,RM,EOGvo,EOGvu,EOGhl,EOGhr)
   .signal[, .id := .id][, .sample := .sample]

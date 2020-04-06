@@ -27,7 +27,7 @@ Imports:
     tidyverse,
     igraph,
     tidyr,
-    purrr,
+    purrr
 LinkingTo: Rcpp, RcppArmadillo
 Suggests: 
     knitr,

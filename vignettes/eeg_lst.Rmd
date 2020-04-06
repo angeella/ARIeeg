@@ -43,7 +43,7 @@ segments_tbl(data)
 Plot data:
 
 ```{r}
-plot(data) 
+#plot(data) 
 ```
 
 Drop off final 5 channels: 

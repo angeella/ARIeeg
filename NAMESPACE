@@ -1,3 +1,13 @@
 useDynLib(ARIeeg, .registration=TRUE)
 importFrom(Rcpp, evalCpp)
+importFrom(eeguana,sample_int)
+importFrom(data.table,setnames)
+importFrom(data.table,setcolorder)
+importFrom(data.table,setattr)
+importFrom(data.table,setkey)
+importFrom(data.table,data.table)
+importFrom(dplyr,tibble)
+importFrom(eeguana,eeg_lst)
+importFrom(eeguana,channel_dbl)
+
 exportPattern("^[[:alpha:]]+")
