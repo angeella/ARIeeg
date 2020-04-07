@@ -118,7 +118,7 @@ data %>%
       description
   ) %>%
   select(-type) %>%
-  select("T7", "T8") %>%
+  select("Fp1", "Fp2") %>%
   ggplot(aes(x = .time, y = .value)) +
   geom_line(aes(group = condition))  +
   stat_summary(

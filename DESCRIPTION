@@ -30,7 +30,9 @@ Imports:
     purrr,
     abind,
     igraph,
-    tidyr
+    tidyr,
+    ARIpermutation,
+    hommel
 LinkingTo: Rcpp, RcppArmadillo
 Suggests: 
     knitr,

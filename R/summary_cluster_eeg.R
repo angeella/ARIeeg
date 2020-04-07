@@ -7,9 +7,10 @@
 #' @param ix set of interest
 #' @param pvalues pvalues matrix where rows indicate the permutations
 #' @author Angela Andreella
-#' @return Returns a list with the following objects: discoveries number of discoveries in the set selected, cluster id, maximum test statistic and relative coordinates
+#' @return Returns a list with the following objects: discoveries number of discoveries in the set selected, cluster id, p-value
 #' @export
-#' 
+#' @importFrom ARIpermutation dI
+
 
 
 
@@ -24,7 +25,7 @@ summary_cluster_eeg <- function(clusters,model,cv,ix,pvalues){
   pvalue <- eval(parse(text=paste0("model$multiple_comparison$", effect, "$clustermass$cluster$pvalue[clusters]")))
 
   #csize <- model$multiple_comparison$stimuli$clustermass$cluster$csize[clusters]
-  #membership <- toString(names(model$multiple_comparison[[1]]$clustermass$cluster$membership[model$multiple_comparison[[1]]$clustermass$cluster$membership ==clusters]))
+  #membership <- toString(unique(model$multiple_comparison$condition$clustermass$data$channel[model$multiple_comparison$condition$clustermass$data$cluster_id==1]))
   #out=c(clustermass)
   #names(out)=c("clustermass")
   out=c(clusters,Total, clustermass,pvalue,False_Null,True_Null,Active_Proportion)

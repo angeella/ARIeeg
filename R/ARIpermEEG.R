@@ -28,7 +28,7 @@
 #' @importFrom ARIpermutation lambdaOpt
 #' @importFrom ARIpermutation cv
 #' @importFrom  permuco4brain brainperm
-#' @importFrom igraph position_to_graph
+#' @importFrom permuco4brain position_to_graph
 #' 
 ARIpermEEG <- function(data, alpha = 0.1, family = "Simes", delta = 0, ct = c(0,1), alternative = "two.sided",timeS = NULL,dist = 50,formula,variable, B = 5000,effect = "condition",...){
   

@@ -21,10 +21,9 @@
 #' @importFrom dplyr mutate
 #' @importFrom purrr  invoke
 #' @importFrom eeguana segments_tbl
-#' @importFrom ARIpermutation lambdaOpt
-#' @importFrom ARIpermutation cv
 #' @importFrom  permuco4brain brainperm
-#' @importFrom igraph position_to_graph
+#' @importFrom permuco4brain position_to_graph
+#' @importFrom hommel hommel
 #' 
 ARIeeg <- function(data, alpha = 0.1,alternative ="two.sided", timeS = NULL,dist = 50,formula,variable, B = 5000, effect = "condition",...){
   
@@ -47,7 +46,7 @@ ARIeeg <- function(data, alpha = 0.1,alternative ="two.sided", timeS = NULL,dist
   
   design <- 
     eeguana::segments_tbl(data)%>%
-    select(var)
+    select(variable)
   
   graph <- position_to_graph(channels_tbl(data), name = .channel, delta = dist,
                              x = .x, y = .y, z = .z)

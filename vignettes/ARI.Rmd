@@ -23,6 +23,7 @@ library(purrr)
 library(abind)
 library(igraph)
 library(permuco4brain)
+library(ARIpermutation)
 load(system.file("extdata", "data_eeg_emotion.RData", package = "ARIeeg"))
 ```
 
@@ -46,7 +47,7 @@ Segments data and select two conditions:
 
 ```{r}
 data_seg <- data %>%
-  eeg_segment(.description %in% c(3,5),
+  eeg_segment(.description %in% c(4,5),
               lim = c(min(dati$timings$time), max(dati$timings$time))
   ) %>% eeg_baseline()  %>%
   mutate(

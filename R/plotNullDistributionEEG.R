@@ -1,3 +1,25 @@
+#' @title plot null distribution EEG 
+#' @description plot null distribution EEG
+#' @usage plotNullDistributionEEG(P,family,alpha, ct, path, name, delta)
+#' @param P pvalues matrix permutation
+#' @param alpha alpha level
+#' @param family which family for the confidence envelope? simes, finner, beta or higher.criticism. default is simes
+#' @param delta do you want to consider at least delta size set?
+#' @param ct set of thresholds
+#' @param path path
+#' @param name plot name
+#' @author Angela Andreella
+#' @return Returns plot null distribution
+#' @export
+#' @importFrom grDevices png
+#' @importFrom grDevices dev.off
+#' @importFrom graphics plot
+#' @importFrom graphics lines
+#' @importFrom grDevices rainbow
+#' @importFrom graphics legend
+#' 
+
+
 plotNullDistributionEEG <- function(P,family="simes",alpha = 0.1, ct = c(0,1), path = getwd(), name = "plot", delta = NULL){
   
   family_set <- c("simes", "finner", "beta", "higher.criticism")
