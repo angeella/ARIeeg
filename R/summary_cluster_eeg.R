@@ -6,6 +6,7 @@
 #' @param cv critical vector
 #' @param ix set of interest
 #' @param pvalues pvalues matrix where rows indicate the permutations
+#' @param eff effect of interest
 #' @author Angela Andreella
 #' @return Returns a list with the following objects: discoveries number of discoveries in the set selected, cluster id, p-value
 #' @export
@@ -14,15 +15,15 @@
 
 
 
-summary_cluster_eeg <- function(clusters,model,cv,ix,pvalues){
+summary_cluster_eeg <- function(clusters,model,cv,ix,pvalues,eff){
   p <- pvalues[1,ix]
   Total = length(p)
   False_Null= dI(ix = ix,cv = cv,praw = pvalues[1,])
   True_Null=Total - False_Null
   Active_Proportion= False_Null / Total
   #info <- eval(parse(text=paste0("model$multiple_comparison$", effect, "$clustermass$cluster")))
-  clustermass <- eval(parse(text=paste0("model$multiple_comparison$", effect, "$clustermass$cluster$clustermass[clusters]")))
-  pvalue <- eval(parse(text=paste0("model$multiple_comparison$", effect, "$clustermass$cluster$pvalue[clusters]")))
+  clustermass <- eval(parse(text=paste0("model$multiple_comparison$", eff, "$clustermass$cluster$clustermass[clusters]")))
+  pvalue <- eval(parse(text=paste0("model$multiple_comparison$", eff, "$clustermass$cluster$pvalue[clusters]")))
 
   #csize <- model$multiple_comparison$stimuli$clustermass$cluster$csize[clusters]
   #membership <- toString(unique(model$multiple_comparison$condition$clustermass$data$channel[model$multiple_comparison$condition$clustermass$data$cluster_id==1]))

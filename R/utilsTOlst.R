@@ -17,7 +17,7 @@
 #' @importFrom eeguana eeg_lst
 #' @importFrom eeguana channel_dbl
 #' @importFrom magrittr %>%
-
+#' 
 utilsTOlst <- function(data, reference = "", unit = "microvolt", resolution = 1){
   
   .sample <- sample_int(data$timings$sample,sampling_rate = dati$srate)

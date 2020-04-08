@@ -32,7 +32,8 @@ Imports:
     igraph,
     tidyr,
     ARIpermutation,
-    hommel
+    hommel,
+    magrittr
 LinkingTo: Rcpp, RcppArmadillo
 Suggests: 
     knitr,

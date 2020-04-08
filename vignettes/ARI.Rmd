@@ -16,14 +16,8 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 library(ARIeeg)
-library(eeguana)
 library(dplyr)
-library(tidyr)
-library(purrr)
-library(abind)
-library(igraph)
-library(permuco4brain)
-library(ARIpermutation)
+library(eeguana)
 load(system.file("extdata", "data_eeg_emotion.RData", package = "ARIeeg"))
 ```
 
@@ -62,19 +56,19 @@ data_seg <- data %>%
 $\delta = 0$
 
 ```{r}
-ARIpermEEG(data=data_seg, alpha=0.1, family="Simes", delta=0, ct=c(0,1), alternative = "two.sided", timeS = c(100:500), dist = 53, formula = signal ~ condition + Error(.subj/(condition)), variable = c(".subj", "condition"), B = 5000, effect = "condition")
+out <-ARIpermEEG(data=data_seg, alpha=0.1, family="Simes", delta=0, ct=c(0,1), alternative = "two.sided", timeS = c(100:500), dist = 53, formula = signal ~ condition + Error(.subj/(condition)), variable = c(".subj", "condition"), B = 5000, eff = "condition")
 ```
 
 $\delta = 50$
 
 ```{r}
-ARIpermEEG(data=data_seg, alpha=0.1, family="Simes", delta=50, ct=c(0,1), alternative = "two.sided", timeS = c(100:500), dist = 53, formula = signal ~ condition + Error(.subj/(condition)), variable = c(".subj", "condition"), B = 5000, effect = "condition")
+out1 <- ARIpermEEG(data=data_seg, alpha=0.1, family="Simes", delta=50, ct=c(0,1), alternative = "two.sided", timeS = c(100:500), dist = 53, formula = signal ~ condition + Error(.subj/(condition)), variable = c(".subj", "condition"), B = 5000, eff = "condition")
 ```
 
 $\delta = 100$
 
 ```{r}
-ARIpermEEG(data=data_seg, alpha=0.1, family="Simes", delta=100, ct=c(0,1), alternative = "two.sided", timeS = c(100:500), dist = 53, formula = signal ~ condition + Error(.subj/(condition)), variable = c(".subj", "condition"), B = 5000, effect = "condition")
+out2 <- ARIpermEEG(data=data_seg, alpha=0.1, family="Simes", delta=100, ct=c(0,1), alternative = "two.sided", timeS = c(100:500), dist = 53, formula = signal ~ condition + Error(.subj/(condition)), variable = c(".subj", "condition"), B = 5000, eff = "condition")
 ```
 
 # Finner family
@@ -82,29 +76,40 @@ ARIpermEEG(data=data_seg, alpha=0.1, family="Simes", delta=100, ct=c(0,1), alter
 $\delta = 0$
 
 ```{r}
-ARIpermEEG(data=data_seg, alpha=0.1, family="Finner", delta=0, ct=c(0,1), alternative = "two.sided", timeS = c(100:500), dist = 53, formula = signal ~ condition + Error(.subj/(condition)), variable = c(".subj", "condition"), B = 5000, effect = "condition")
+out3 <- ARIpermEEG(data=data_seg, alpha=0.1, family="Finner", delta=0, ct=c(0,1), alternative = "two.sided", timeS = c(100:500), dist = 53, formula = signal ~ condition + Error(.subj/(condition)), variable = c(".subj", "condition"), B = 5000, eff = "condition")
 ```
 
 $\delta = 50$
 
 ```{r}
-ARIpermEEG(data=data_seg, alpha=0.1, family="Finner", delta=50, ct=c(0,1), alternative = "two.sided", timeS = c(100:500), dist = 53, formula = signal ~ condition + Error(.subj/(condition)), variable = c(".subj", "condition"), B = 5000, effect = "condition")
+out4 <- ARIpermEEG(data=data_seg, alpha=0.1, family="Finner", delta=50, ct=c(0,1), alternative = "two.sided", timeS = c(100:500), dist = 53, formula = signal ~ condition + Error(.subj/(condition)), variable = c(".subj", "condition"), B = 5000, eff = "condition")
 ```
 
 $\delta = 100$
 
 ```{r}
-ARIpermEEG(data=data_seg, alpha=0.1, family="Finner", delta=100, ct=c(0,1), alternative = "two.sided", timeS = c(100:500), dist = 53, formula = signal ~ condition + Error(.subj/(condition)), variable = c(".subj", "condition"), B = 5000, effect = "condition")
+out5 <- ARIpermEEG(data=data_seg, alpha=0.1, family="Finner", delta=100, ct=c(0,1), alternative = "two.sided", timeS = c(100:500), dist = 53, formula = signal ~ condition + Error(.subj/(condition)), variable = c(".subj", "condition"), B = 5000, eff = "condition")
 ```
 
 # Beta 
 
 ```{r}
-ARIpermEEG(data=data_seg, alpha=0.1, family="beta", delta=0, ct=c(0,1), alternative = "two.sided", timeS = c(100:500), dist = 53, formula = signal ~ condition + Error(.subj/(condition)), variable = c(".subj", "condition"), B = 5000, effect = "condition")
+out6 <- ARIpermEEG(data=data_seg, alpha=0.1, family="beta", delta=0, ct=c(0,1), alternative = "two.sided", timeS = c(100:500), dist = 53, formula = signal ~ condition + Error(.subj/(condition)), variable = c(".subj", "condition"), B = 5000, eff = "condition")
 ```
 
 # higher criticism 
 
 ```{r}
-ARIpermEEG(data=data_seg, alpha=0.1, family="higher.criticism", delta=0, ct=c(0,1), alternative = "two.sided", timeS = c(100:500), dist = 53, formula = signal ~ condition + Error(.subj/(condition)), variable = c(".subj", "condition"), B = 5000, effect = "condition")
+out7 <- ARIpermEEG(data=data_seg, alpha=0.1, family="higher.criticism", delta=0, ct=c(0,1), alternative = "two.sided", timeS = c(100:500), dist = 53, formula = signal ~ condition + Error(.subj/(condition)), variable = c(".subj", "condition"), B = 5000, eff = "condition")
 ```
+
+# parametric ARI
+
+```{r}
+out8<-ARIeeg(data =data_seg, alpha = 0.1,alternative ="two.sided", timeS = c(100:500),dist = 53,formula = signal ~ condition + Error(.subj/(condition)), variable = c(".subj", "condition"), B = 5000, eff = "condition")
+  
+```
+
+
+
+

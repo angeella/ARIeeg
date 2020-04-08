@@ -12,7 +12,7 @@
 #' @param formula formula object defining the design of the model.
 #' @param variable variables to use in the right part of the formula
 #' @param B number of permutation, default 5000
-#' @param effect effect of interest where apply ARI
+#' @param eff effect of interest where apply ARI
 #' @author Angela Andreella
 #' @return Returns a data.frame with number of true discoveries for each cluster
 #' @export
@@ -30,7 +30,7 @@
 #' @importFrom  permuco4brain brainperm
 #' @importFrom permuco4brain position_to_graph
 #' 
-ARIpermEEG <- function(data, alpha = 0.1, family = "Simes", delta = 0, ct = c(0,1), alternative = "two.sided",timeS = NULL,dist = 50,formula,variable, B = 5000,effect = "condition",...){
+ARIpermEEG <- function(data, alpha = 0.1, family = "Simes", delta = 0, ct = c(0,1), alternative = "two.sided",timeS = NULL,dist = 50,formula,variable, B = 5000,eff = "condition",...){
   
   if(!is_eeg_lst(data)){
     data <- utilsTOlst(data, ...)
@@ -71,11 +71,10 @@ ARIpermEEG <- function(data, alpha = 0.1, family = "Simes", delta = 0, ct = c(0,
                                     effect = NULL,
                                     return_distribution = TRUE)
   
-  Test <- eval(parse(text=paste0("model$multiple_comparison$", effect, "$uncorrected$distribution")))
+  Test <- eval(parse(text=paste0("model$multiple_comparison$", eff, "$uncorrected$distribution")))
   dim(Test) <- c(dim(Test)[1], dim(Test)[2]*dim(Test)[3])
 
-  test_obs <- eval(parse(text=paste0("model$multiple_comparison$", effect, "$clustermass$data$statistic")))
-  
+  test_obs <- eval(parse(text=paste0("model$multiple_comparison$", eff, "$clustermass$data$statistic")))
   TT <- rbind(test_obs,Test)
   pvalues <- switch(alternative, 
                "two.sided" =  matrixStats::colRanks(-abs(TT)) / nrow(TT),
@@ -90,11 +89,11 @@ ARIpermEEG <- function(data, alpha = 0.1, family = "Simes", delta = 0, ct = c(0,
   cvOpt = cv(pvalues = pvalues_ord, family = family, alpha = alpha, lambda= lambda, delta = delta)
   
  #clstr_id <- model$multiple_comparison[[1]]$clustermass$data$cluster_id[which(model$multiple_comparison[[1]]$clustermass$data$cluster_id!=0)]
-  clstr_id <- eval(parse(text=paste0("model$multiple_comparison$", effect, "$clustermass$data$cluster_id")))
+  clstr_id <- eval(parse(text=paste0("model$multiple_comparison$", eff, "$clustermass$data$cluster_id")))
   
   #clusters <- c(1:model$multiple_comparison[[1]]$clustermass$cluster$no)[which(model$multiple_comparison[[1]]$clustermass$cluster$pvalue<=0.1)]
   #clusters <- which(model$multiple_comparison[[1]]$clustermass$cluster$pvalue<=0.1)
-  clusters <- c(1:eval(parse(text=paste0("model$multiple_comparison$", effect, "$clustermass$cluster$no"))))
+  clusters <- c(1:eval(parse(text=paste0("model$multiple_comparison$", eff, "$clustermass$cluster$no"))))
   #hom <-hommel(pvalues[1,])
   
   out=lapply(clusters,function(i){
@@ -106,7 +105,7 @@ ARIpermEEG <- function(data, alpha = 0.1, family = "Simes", delta = 0, ct = c(0,
     #perm <- SingleStepCT(pvalues = pvalues,ct =ct, ix =as.vector(which(ix[mask])), alpha = alpha, shift = shift, family = 'Simes', lambda = lambda)
     #perm <- discoveriesPerm(praw = praw, ix = ix[mask], cvh = cvh)
     summary_cluster_eeg(clusters = i,model = model, 
-                        cv = cvOpt,ix=ix,pvalues = pvalues)
+                        cv = cvOpt,ix=ix,pvalues = pvalues, eff = eff)
     #summary_hommel_eeg(hommel = hom,ix=ix, alpha = 0.1, clusters = i)
     
   

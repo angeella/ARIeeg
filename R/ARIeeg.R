@@ -64,27 +64,27 @@ ARIeeg <- function(data, alpha = 0.1,alternative ="two.sided", timeS = NULL,dist
                      threshold = NULL,
                      multcomp = "clustermass",
                      effect = NULL,
-                     return_distribution = FALSE)
+                     return_distribution = TRUE)
   
-  Test <- eval(parse(text=paste0("model$multiple_comparison$", effect, "$uncorrected$distribution")))
+  Test <- eval(parse(text=paste0("model$multiple_comparison$", eff, "$uncorrected$distribution")))
   dim(Test) <- c(dim(Test)[1], dim(Test)[2]*dim(Test)[3])
 
-  test_obs <- eval(parse(text=paste0("model$multiple_comparison$", effect, "$clustermass$data$statistic")))
+  test_obs <- eval(parse(text=paste0("model$multiple_comparison$",eff, "$clustermass$data$statistic")))
 
   TT <- rbind(test_obs,Test)
   pvalues <- switch(alternative, 
-                    "two.sided" =  matrixStats::colRanks(-abs(TT)) / (nrow(TT)+1),
-                    "greater" = matrixStats::colRanks(-TT) / (nrow(TT)+1),
-                    "less" = matrixStats::colRanks(TT) / (nrow(TT)+1))
+                    "two.sided" =  matrixStats::colRanks(-abs(TT)) / (nrow(TT)),
+                    "greater" = matrixStats::colRanks(-TT) / (nrow(TT)),
+                    "less" = matrixStats::colRanks(TT) / (nrow(TT)))
 
-  clstr_id <- eval(parse(text=paste0("model$multiple_comparison$", effect, "$clustermass$data$cluster_id")))
+  clstr_id <- eval(parse(text=paste0("model$multiple_comparison$", eff, "$clustermass$data$cluster_id")))
   
-  clusters <- c(1:eval(parse(text=paste0("model$multiple_comparison$", effect, "$clustermass$cluster$no"))))
+  clusters <- c(1:eval(parse(text=paste0("model$multiple_comparison$", eff, "$clustermass$cluster$no"))))
   hom <-hommel(pvalues[,1])
   
   out=lapply(clusters,function(i){
     ix= which(clstr_id == i)
-    summary_hommel_eeg(hommel = hom,ix=ix, alpha = alpha, clusters = i)
+    summary_hommel_eeg(hommel = hom,ix=ix, alpha = alpha, clusters = i,eff = eff)
     
     
   })

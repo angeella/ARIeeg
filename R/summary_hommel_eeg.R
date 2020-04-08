@@ -12,13 +12,13 @@
 
 
 
-summary_hommel_eeg <- function(hommel,ix,alpha, clusters){
+summary_hommel_eeg <- function(hommel,ix,alpha, clusters,eff){
   Total=length(hommel@p[ix])
   False_Null= discoveries(hommel, alpha=alpha, ix=ix)
   True_Null=Total-False_Null
   Active_Proportion= False_Null/Total
-  clustermass <- eval(parse(text=paste0("model$multiple_comparison$", effect, "$clustermass$cluster$clustermass[clusters]")))
-  pvalue <- eval(parse(text=paste0("model$multiple_comparison$", effect, "$clustermass$cluster$pvalue[clusters]")))
+  clustermass <- eval(parse(text=paste0("model$multiple_comparison$", eff, "$clustermass$cluster$clustermass[clusters]")))
+  pvalue <- eval(parse(text=paste0("model$multiple_comparison$", eff, "$clustermass$cluster$pvalue[clusters]")))
   out=c(clusters,Total, clustermass,pvalue,False_Null,True_Null,Active_Proportion)
   names(out)=c("ID","Total", "clustermass", "pvalue", "False Null", "True Null", "Active Proportion" )
   out
