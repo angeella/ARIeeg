@@ -1,7 +1,7 @@
 #' @title ARI Permutation-based for EEG data
 #' @description Performs ARI using permutation local test for EEG data
-#' @usage ARIpermEEG(data, alpha, family, delta, ct, alternative, timeS, dist, formula, variable, B, effect, ...)
-#' @param data data
+#' @usage ARIpermEEG(data, alpha, family, delta, ct, alternative, timeS, dist, formula, variable, B, effect, model, ...)
+#' @param data data, default is NULL. You need to insert data or model
 #' @param alpha alpha level
 #' @param family which family for the confidence envelope? simes, finner, beta or higher.criticism. default is simes
 #' @param delta do you want to consider at least delta size set?
@@ -13,6 +13,7 @@
 #' @param variable variables to use in the right part of the formula
 #' @param B number of permutation, default 5000
 #' @param eff effect of interest where apply ARI
+#' @model permuco4brain model, default is NULL
 #' @author Angela Andreella
 #' @return Returns a data.frame with number of true discoveries for each cluster
 #' @export
@@ -30,7 +31,11 @@
 #' @importFrom  permuco4brain brainperm
 #' @importFrom permuco4brain position_to_graph
 #' 
-ARIpermEEG <- function(data, alpha = 0.1, family = "Simes", delta = 0, ct = c(0,1), alternative = "two.sided",timeS = NULL,dist = 50,formula,variable, B = 5000,eff = "condition",...){
+ARIpermEEG <- function(data=NULL, alpha = 0.1, family = "Simes", delta = 0, ct = c(0,1), alternative = "two.sided",timeS = NULL,dist = 50,formula=NULL,variable=NULL, B = 5000,eff = "condition", model = NULL,...){
+  
+  if(!is.null(data) & !is.null(model)){stop("Please insert data or model object")}
+  if(!is.null(data)){
+    
   
   if(!is_eeg_lst(data)){
     data <- utilsTOlst(data, ...)
@@ -63,23 +68,25 @@ ARIpermEEG <- function(data, alpha = 0.1, family = "Simes", delta = 0, ct = c(0,
                                     graph = graph,
                                     np = B,
                                     method = NULL,
-                                    type = "signflip",
+                                    type = "permutation",
                                     test = "fisher",
                                     aggr_FUN = NULL,
                                     threshold = NULL,
                                     multcomp = "clustermass",
                                     effect = NULL,
                                     return_distribution = TRUE)
+  }
+  
   
   Test <- eval(parse(text=paste0("model$multiple_comparison$", eff, "$uncorrected$distribution")))
   dim(Test) <- c(dim(Test)[1], dim(Test)[2]*dim(Test)[3])
 
-  test_obs <- eval(parse(text=paste0("model$multiple_comparison$", eff, "$clustermass$data$statistic")))
-  TT <- rbind(test_obs,Test)
+  #test_obs <- eval(parse(text=paste0("model$multiple_comparison$", eff, "$clustermass$data$statistic")))
+  #TT <- rbind(test_obs,Test)
   pvalues <- switch(alternative, 
-               "two.sided" =  matrixStats::colRanks(-abs(TT)) / nrow(TT),
-               "greater" = matrixStats::colRanks(-TT) / nrow(TT),
-               "less" = matrixStats::colRanks(TT) / nrow(TT))
+               "two.sided" =  matrixStats::colRanks(-abs(Test)) / nrow(Test),
+               "greater" = matrixStats::colRanks(-Test) / nrow(Test),
+               "less" = matrixStats::colRanks(Test) / nrow(Test))
   
   
   pvalues <-t(pvalues)

@@ -25,8 +25,9 @@
 #' @importFrom permuco4brain position_to_graph
 #' @importFrom hommel hommel
 #' 
-ARIeeg <- function(data, alpha = 0.1,alternative ="two.sided", timeS = NULL,dist = 50,formula,variable, B = 5000, effect = "condition",...){
-  
+ARIeeg <- function(data = NULL, alpha = 0.1,alternative ="two.sided", timeS = NULL,dist = 50,formula = NULL,variable = NULL, B = 5000, effect = "condition",model = NULL, ...){
+  if(!is.null(data) & !is.null(model)){stop("Please insert data or model object")}
+  if(!is.null(data)){
   if(!is_eeg_lst(data)){
     data <- utilsTOlst(data, ...)
   }
@@ -65,17 +66,17 @@ ARIeeg <- function(data, alpha = 0.1,alternative ="two.sided", timeS = NULL,dist
                      multcomp = "clustermass",
                      effect = NULL,
                      return_distribution = TRUE)
-  
+  }
   Test <- eval(parse(text=paste0("model$multiple_comparison$", eff, "$uncorrected$distribution")))
   dim(Test) <- c(dim(Test)[1], dim(Test)[2]*dim(Test)[3])
 
-  test_obs <- eval(parse(text=paste0("model$multiple_comparison$",eff, "$clustermass$data$statistic")))
+  #test_obs <- eval(parse(text=paste0("model$multiple_comparison$",eff, "$clustermass$data$statistic")))
 
-  TT <- rbind(test_obs,Test)
+  #TT <- rbind(test_obs,Test)
   pvalues <- switch(alternative, 
-                    "two.sided" =  matrixStats::colRanks(-abs(TT)) / (nrow(TT)),
-                    "greater" = matrixStats::colRanks(-TT) / (nrow(TT)),
-                    "less" = matrixStats::colRanks(TT) / (nrow(TT)))
+                    "two.sided" =  matrixStats::colRanks(-abs(Test)) / (nrow(Test)),
+                    "greater" = matrixStats::colRanks(-Test) / (nrow(Test)),
+                    "less" = matrixStats::colRanks(Test) / (nrow(Test)))
 
   clstr_id <- eval(parse(text=paste0("model$multiple_comparison$", eff, "$clustermass$data$cluster_id")))
   
