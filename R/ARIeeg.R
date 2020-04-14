@@ -9,7 +9,7 @@
 #' @param formula formula object defining the design of the model.
 #' @param variable variables to use in the right part of the formula
 #' @param B number of permutation, default 5000
-#' @param effect effect of interest where apply ARI
+#' @param eff effect of interest where apply ARI
 #' @author Angela Andreella
 #' @return Returns a data.frame with number of true discoveries for each cluster
 #' @export
@@ -25,7 +25,7 @@
 #' @importFrom permuco4brain position_to_graph
 #' @importFrom hommel hommel
 #' 
-ARIeeg <- function(data = NULL, alpha = 0.1,alternative ="two.sided", timeS = NULL,dist = 50,formula = NULL,variable = NULL, B = 5000, effect = "condition",model = NULL, ...){
+ARIeeg <- function(data = NULL, alpha = 0.1,alternative ="two.sided", timeS = NULL,dist = 50,formula = NULL,variable = NULL, B = 5000, eff = "condition",model = NULL, ...){
   if(!is.null(data) & !is.null(model)){stop("Please insert data or model object")}
   if(!is.null(data)){
   if(!is_eeg_lst(data)){
@@ -46,7 +46,7 @@ ARIeeg <- function(data = NULL, alpha = 0.1,alternative ="two.sided", timeS = NU
   if(!is.null(timeS)){signal <- signal[,timeS,]}
   
   design <- 
-    eeguana::segments_tbl(data)%>%
+    segments_tbl(data)%>%
     select(variable)
   
   graph <- position_to_graph(channels_tbl(data), name = .channel, delta = dist,

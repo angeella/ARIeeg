@@ -41,7 +41,7 @@ Segments data and select two conditions:
 
 ```{r}
 data_seg <- data %>%
-  eeg_segment(.description %in% c(4,5),
+  eeg_segment(.description %in% c(3,5),
               lim = c(min(dati$timings$time), max(dati$timings$time))
   ) %>% eeg_baseline()  %>%
   mutate(
@@ -56,7 +56,7 @@ data_seg <- data %>%
 $\delta = 0$
 
 ```{r}
-out <-ARIpermEEG(data=data_seg, alpha=0.1, family="Simes", delta=0, ct=c(0,1), alternative = "two.sided", timeS = c(100:400), dist = 53, formula = signal ~ condition + Error(.subj/(condition)), variable = c(".subj", "condition"), B = 5000, eff = "condition")
+out <-ARIpermEEG(data=data_seg, alpha=0.1, family="Simes", delta=0, ct=c(0,1), alternative = "two.sided", timeS = c(100:500), dist = 53, formula = signal ~ condition + Error(.subj/(condition)), variable = c(".subj", "condition"), B = 5000, eff = "condition")
 ```
 
 $\delta = 50$

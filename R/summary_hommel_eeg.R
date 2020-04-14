@@ -1,10 +1,11 @@
 #' @title summary cluster EEG
 #' @description gives summary for each cluster EEG from clusterMass method
-#' @usage summary_hommel_eeg(hommel,ix,alpha, clusters)
+#' @usage summary_hommel_eeg(hommel,ix,alpha, clusters,eff)
 #' @param hommel hommel object from hommel package
 #' @param ix set of interest
 #' @param alpha alpha level
 #' @param clusters id clusters
+#' @param eff effect of interest
 #' @author Angela Andreella
 #' @return Returns a list with the following objects: discoveries number of discoveries in the set selected, cluster id, p-value
 #' @export
