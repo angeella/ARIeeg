@@ -43,6 +43,11 @@ plotNullDistributionEEG <- function(P,family="simes",alpha = 0.1, ct = c(0,1), p
     lcv <- function(family,delta=NULL, cols = "blue"){
       lambdaO <- lambdaOpt(pvalues = pvalues_ord,family=family,ct=ct,alpha=alpha, delta = delta)
       cvO<- cv(pvalues = pvalues_ord, family = family, alpha = alpha, lambda = lambdaO, delta = delta)
+      if(is.unsorted(cvO)){
+        idS = which(sapply(c(1:length(cvO)), function(x) is.unsorted(cvO[1:x])))[1]
+        cvO = c(cvO[1:(idS-1)], rep(length(cvO)-1, max(cvO[1:(idS-1)])))  
+        
+      }
       lines(cvO, lwd =2, col= cols)
       
     }

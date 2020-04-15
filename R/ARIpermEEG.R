@@ -94,7 +94,11 @@ ARIpermEEG <- function(data=NULL, alpha = 0.1, family = "Simes", delta = 0, ct =
   pvalues_ord <- rowSortC(pvalues)
   lambda <- lambdaOpt(pvalues = pvalues_ord, family = family, ct = ct, alpha = alpha, delta = delta) 
   cvOpt = cv(pvalues = pvalues_ord, family = family, alpha = alpha, lambda= lambda, delta = delta)
-  
+  if(is.unsorted(cvOpt)){
+    idS = which(sapply(c(1:length(cvOpt)), function(x) is.unsorted(cvOpt[1:x])))[1]
+    cvOpt = c(cvOpt[1:(idS-1)], rep(length(cvOpt)-1, max(cvOpt[1:(idS-1)])))  
+    
+  }
  #clstr_id <- model$multiple_comparison[[1]]$clustermass$data$cluster_id[which(model$multiple_comparison[[1]]$clustermass$data$cluster_id!=0)]
   clstr_id <- eval(parse(text=paste0("model$multiple_comparison$", eff, "$clustermass$data$cluster_id")))
   
