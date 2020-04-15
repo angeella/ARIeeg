@@ -83,7 +83,7 @@ Plot ERP of each subject (average across condition):
 
 ```{r}
 data_seg %>%
-  select(O1) %>%
+  select(P7) %>%
   ggplot(aes(x = .time, y = .value)) +
   geom_line(aes(group = .subj))  +
 stat_summary(
@@ -96,8 +96,10 @@ Plot ERP of condition (average across subject):
 
 ```{r}
 
+data_seg$.segments$condition <- ifelse(data_seg$.segments$condition =="3", "Disgust Face", "Object")
+
 data_seg %>%
-  select(O1) %>%
+  select(P7) %>%
   ggplot(aes(x = .time, y = .value)) +
   geom_line(alpha = 0.1,aes(group = condition))  +
   stat_summary(
@@ -135,7 +137,7 @@ Other plots:
 
 ```{r}
 data_seg %>%
-  select(O1, O2, PO7, PO8) %>%
+  select(P7) %>%
   ggplot(aes(x = .time, y = .value)) +
   geom_line(alpha = .1, aes(group = .id, color = condition)) +
   stat_summary(
