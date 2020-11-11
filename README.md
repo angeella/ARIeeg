@@ -1,5 +1,5 @@
 
-# All-Resolutions Inference for Electroencephalography (EEG) data
+# ARIeeg: All-Resolutions Inference for Electroencephalography (EEG) data
 
 <!-- badges: start -->
 <!-- badges: end -->
