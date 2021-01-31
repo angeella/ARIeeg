@@ -18,10 +18,6 @@ Imports:
     plyr,
     ggplot2,
     tools,
-    eeguana,
-    eegUtils,
-    permuco4brain,
-    permuco,
     data.table,
     dplyr,
     tidyverse,
@@ -31,12 +27,18 @@ Imports:
     abind,
     igraph,
     tidyr,
-    ARIpermutation,
     hommel,
     magrittr
 LinkingTo: Rcpp, RcppArmadillo
 Suggests: 
     knitr,
     rmarkdown,
-    gridExtra   
+    gridExtra 
+Remotes: 
+    github::angeella/pARI
+    github::bnicenboim/eeguana
+    github::craddm/eegUtils
+    github::jaromilfrossard/permuco4brain
+    github::jaromilfrossard/permuco
 VignetteBuilder: knitr
+RoxygenNote: 7.1.1

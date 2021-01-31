@@ -7,6 +7,7 @@
 #' @param resolution resolution
 #' @author Angela Andreella
 #' @return Returns an eeg lst from eeguana package
+#' @export
 #' @importFrom eeguana sample_int
 #' @importFrom data.table setnames
 #' @importFrom data.table setcolorder
@@ -16,10 +17,9 @@
 #' @importFrom dplyr tibble 
 #' @importFrom eeguana eeg_lst
 #' @importFrom eeguana channel_dbl
-#' @importFrom magrittr %>%
 #' 
 utilsTOlst <- function(data, reference = "", unit = "microvolt", resolution = 1){
-  
+
   .sample <- sample_int(data$timings$sample,sampling_rate = dati$srate)
   
   .id <- data$timings$epoch
@@ -46,12 +46,12 @@ utilsTOlst <- function(data, reference = "", unit = "microvolt", resolution = 1)
   }
   ####signal tbl
   
-  #' The signal table is organised into columns representing timestamps
-  #' .sample and individual electrodes. Each .sample corresponds to
-  #' 1 sample in the original recording, i.e. if the sampling rate of the EEG
-  #' recording is 500 Hz, then each .sample corresponds to 2 milliseconds.
-  #' These timestamps correspond to .initial in the events table, which
-  #' displays only the timestamps where logged events began. 
+  # The signal table is organised into columns representing timestamps
+  # .sample and individual electrodes. Each .sample corresponds to
+  # 1 sample in the original recording, i.e. if the sampling rate of the EEG
+  # recording is 500 Hz, then each .sample corresponds to 2 milliseconds.
+  # These timestamps correspond to .initial in the events table, which
+  # displays only the timestamps where logged events began. 
   #TODO!!!!!
   #.signal <- data.table(.id,.sample,sapply(nam, function(x) assign(x,get(x))))
   .signal <- data.table(.id,.sample,Fp1,Fp2,F3,F4,F7,F8,FC1,FC2,C3,C4,T7,T8,

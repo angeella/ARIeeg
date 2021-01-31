@@ -1,11 +1,10 @@
 #' @title ARI Permutation-based for EEG data
 #' @description Performs ARI using permutation local test for EEG data
-#' @usage ARIpermEEG(data, alpha, family, delta, ct, alternative, timeS, dist, formula, variable, B, effect, model, ...)
+#' @usage ARIpermEEG(data, alpha, family, delta, alternative, timeS, dist, formula, variable, B, effect, model, ...)
 #' @param data data, default is NULL. You need to insert data or model
 #' @param alpha alpha level
 #' @param family which family for the confidence envelope? simes, finner, beta or higher.criticism. default is simes
 #' @param delta do you want to consider at least delta size set?
-#' @param ct set of thresholds
 #' @param alternative alternative hypothesis
 #' @param timeS time signal to select, default NULL, i.e. no selection
 #' @param dist an double defining the maximal distance for adjacency of two channels
@@ -21,17 +20,17 @@
 #' @importFrom tidyr nest
 #' @importFrom abind abind
 #' @importFrom dplyr group_by
-#' @importFrom signal_tbl eeguana
+#' @importFrom eeguana signal_tbl
 #' @importFrom dplyr mutate
 #' @importFrom purrr invoke
 #' @importFrom purrr map
 #' @importFrom eeguana segments_tbl
-#' @importFrom ARIpermutation lambdaOpt
-#' @importFrom ARIpermutation cv
+#' @importFrom pARI lambdaOpt
+#' @importFrom pARI criticalVector
 #' @importFrom  permuco4brain brainperm
 #' @importFrom permuco4brain position_to_graph
 #' 
-ARIpermEEG <- function(data=NULL, alpha = 0.1, family = "Simes", delta = 0, ct = c(0,1), alternative = "two.sided",timeS = NULL,dist = 50,formula=NULL,variable=NULL, B = 5000,eff = "condition", model = NULL,...){
+ARIpermEEG <- function(data=NULL, alpha = 0.1, family = "Simes", delta = 0, alternative = "two.sided",timeS = NULL,dist = 50,formula=NULL,variable=NULL, B = 5000,eff = "condition", model = NULL,...){
   
   if(!is.null(data) & !is.null(model)){stop("Please insert data or model object")}
   if(!is.null(data)){
@@ -92,8 +91,8 @@ ARIpermEEG <- function(data=NULL, alpha = 0.1, family = "Simes", delta = 0, ct =
   pvalues <-t(pvalues)
   #pvalues <- pvalues[,which(model$multiple_comparison[[1]]$clustermass$data$cluster_id!=0)]
   pvalues_ord <- rowSortC(pvalues)
-  lambda <- lambdaOpt(pvalues = pvalues_ord, family = family, ct = ct, alpha = alpha, delta = delta) 
-  cvOpt = cv(pvalues = pvalues_ord, family = family, alpha = alpha, lambda= lambda, delta = delta)
+  lambda <- lambdaOpt(pvalues = t(pvalues_ord), family = family, alpha = alpha, delta = delta) 
+  cvOpt = criticalVector(pvalues = t(pvalues_ord), family = family, alpha = alpha, lambda= lambda, delta = delta)
   if(is.unsorted(cvOpt)){
     idS = which(sapply(c(1:length(cvOpt)), function(x) is.unsorted(cvOpt[1:x])))[1]
     cvOpt = c(cvOpt[1:(idS-1)], rep(length(cvOpt)-1, max(cvOpt[1:(idS-1)])))  

@@ -1,11 +1,10 @@
 #' @title plot null distribution EEG 
 #' @description plot null distribution EEG
-#' @usage plotNullDistributionEEG(P,family,alpha, ct, path, name, delta)
+#' @usage plotNullDistributionEEG(P,family,alpha, path, name, delta)
 #' @param P pvalues matrix permutation
 #' @param alpha alpha level
 #' @param family which family for the confidence envelope? simes, finner, beta or higher.criticism. default is simes
 #' @param delta do you want to consider at least delta size set?
-#' @param ct set of thresholds
 #' @param path path
 #' @param name plot name
 #' @author Angela Andreella
@@ -17,12 +16,14 @@
 #' @importFrom graphics lines
 #' @importFrom grDevices rainbow
 #' @importFrom graphics legend
+#' @importFrom pARI criticalVector
+#' @importFrom pARI lambdaOpt
 #' 
 
 
-plotNullDistributionEEG <- function(P,family="simes",alpha = 0.1, ct = c(0,1), path = getwd(), name = "plot", delta = NULL){
+plotNullDistributionEEG <- function(P,family="simes",alpha = 0.1, path = getwd(), name = "plot", delta = NULL){
   
-  family_set <- c("simes", "finner", "beta", "higher.criticism")
+  family_set <- c("simes", "aorc", "beta", "higher.criticism")
   fam_match <- function(x) {match.arg(tolower(x), family_set)}
   if(!is.null(family)){family <- unlist(lapply(family, fam_match))}
   if(is.null(P)){stop('Please insert pvalues matrix')}
@@ -41,8 +42,8 @@ plotNullDistributionEEG <- function(P,family="simes",alpha = 0.1, ct = c(0,1), p
     dev.off()
   }else{
     lcv <- function(family,delta=NULL, cols = "blue"){
-      lambdaO <- lambdaOpt(pvalues = pvalues_ord,family=family,ct=ct,alpha=alpha, delta = delta)
-      cvO<- cv(pvalues = pvalues_ord, family = family, alpha = alpha, lambda = lambdaO, delta = delta)
+      lambdaO <- lambdaOpt(pvalues = t(pvalues_ord),family=family,alpha=alpha, delta = delta)
+      cvO<- criticalVector(pvalues = t(pvalues_ord), family = family, alpha = alpha, lambda = lambdaO, delta = delta)
       if(is.unsorted(cvO)){
         idS = which(sapply(c(1:length(cvO)), function(x) is.unsorted(cvO[1:x])))[1]
         cvO = c(cvO[1:(idS-1)], rep(length(cvO)-1, max(cvO[1:(idS-1)])))  

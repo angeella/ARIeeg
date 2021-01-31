@@ -10,7 +10,7 @@
 #' @author Angela Andreella
 #' @return Returns a list with the following objects: discoveries number of discoveries in the set selected, cluster id, p-value
 #' @export
-#' @importFrom ARIpermutation dI
+#' @importFrom pARI dI
 
 
 

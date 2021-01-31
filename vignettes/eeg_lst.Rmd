@@ -16,6 +16,9 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 library(ARIeeg)
+library(eeguana)
+library(dplyr)
+library(ggplot2)
 load(system.file("extdata", "data_eeg_emotion.RData", package = "ARIeeg"))
 ```
 
@@ -98,14 +101,20 @@ Plot ERP of condition (average across subject):
 
 data_seg$.segments$condition <- ifelse(data_seg$.segments$condition =="3", "Disgust Face", "Object")
 
+colnames(data_seg$.segments)[5] <- "Condition"
+
 data_seg %>%
   select(P7) %>%
   ggplot(aes(x = .time, y = .value)) +
-  geom_line(alpha = 0.1,aes(group = condition))  +
+  geom_line(alpha = 0.1,aes(group = Condition))  +
   stat_summary(
     fun = "mean", geom = "line", alpha = 1, size = 1.5,
-    aes(color = condition),show.legend = FALSE
-  ) 
+    aes(color = Condition),show.legend = FALSE
+  ) + theme_classic() + xlab("Time") + ylab("Value") +
+  geom_vline(xintercept = 0, linetype = "dashed") +
+  geom_vline(xintercept = .17, linetype = "dotted") +
+  theme(legend.position = "bottom")+
+  scale_color_manual(labels = c("Disgust", "Object"), values = c("#80bfff", "#ff8080")) 
 ```
 
 All conditions:
@@ -116,16 +125,16 @@ data %>%
               lim = c(min(dati$timings$time), max(dati$timings$time))
   ) %>% eeg_baseline() %>%
   mutate(
-    condition =
+    Condition =
       description
   ) %>%
   select(-type) %>%
   select("Fp1", "Fp2") %>%
   ggplot(aes(x = .time, y = .value)) +
-  geom_line(aes(group = condition))  +
+  geom_line(aes(group = Condition))  +
   stat_summary(
     fun = "mean", geom = "line", alpha = 1, size = 1.5,
-    aes(color = condition),show.legend = TRUE
+    aes(color = Condition),show.legend = TRUE
   ) +
   facet_wrap(~.key) +
   geom_vline(xintercept = 0, linetype = "dashed") +
@@ -139,19 +148,20 @@ Other plots:
 data_seg %>%
   select(P7) %>%
   ggplot(aes(x = .time, y = .value)) +
-  geom_line(alpha = .1, aes(group = .id, color = condition)) +
+  geom_line(alpha = .1, aes(group = .id, color = Condition)) +
   stat_summary(
     fun = "mean", geom = "line", alpha = 1, size = 1.5,
-    aes(color = condition)
+    aes(color = Condition)
   ) +
   facet_wrap(~.key) +
   geom_vline(xintercept = 0, linetype = "dashed") +
   geom_vline(xintercept = .17, linetype = "dotted") +
-  theme(legend.position = "bottom")
+  theme(legend.position = "bottom") + theme_classic()
 
 ```
 
 ```{r}
+colnames(data_seg$.segments)[5] <- "condition"
 
 data_seg %>%
   transmute(
@@ -159,10 +169,10 @@ data_seg %>%
     Parietal = chs_mean(P3, P4, P7, P8, Pz, na.rm = TRUE)
   ) %>%
   ggplot(aes(x = .time, y = .value)) +
-  geom_line(alpha = .1, aes(group = .id, color = condition)) +
+  geom_line(alpha = .1, aes(group = .id, color = Condition)) +
   stat_summary(
     fun.y = "mean", geom = "line", alpha = 1, size = 1,
-    aes(color = condition)
+    aes(color = Condition)
   ) +
   facet_wrap(~.key) +
   theme(legend.position = "bottom")
@@ -177,7 +187,7 @@ ERP_data <- data_seg %>%
 
 ERP_plot <- ERP_data %>%
   ggplot(aes(x = .time, y = .value)) +
-  geom_line(aes(color = condition)) +
+  geom_line(aes(color = Condition)) +
   facet_wrap(~.key) +
   theme(legend.position = "bottom") +
   ggtitle("ERPs for happy vs neutral") +
