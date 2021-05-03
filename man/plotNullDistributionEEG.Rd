@@ -4,7 +4,7 @@
 \alias{plotNullDistributionEEG}
 \title{plot null distribution EEG}
 \usage{
-plotNullDistributionEEG(P,family,alpha, ct, path, name, delta)
+plotNullDistributionEEG(P,family,alpha, path, name, delta)
 }
 \arguments{
 \item{P}{pvalues matrix permutation}
@@ -12,8 +12,6 @@ plotNullDistributionEEG(P,family,alpha, ct, path, name, delta)
 \item{family}{which family for the confidence envelope? simes, finner, beta or higher.criticism. default is simes}
 
 \item{alpha}{alpha level}
-
-\item{ct}{set of thresholds}
 
 \item{path}{path}
 

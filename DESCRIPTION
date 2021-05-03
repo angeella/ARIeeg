@@ -35,10 +35,10 @@ Suggests:
     rmarkdown,
     gridExtra 
 Remotes: 
-    github::angeella/pARI,
-    github::bnicenboim/eeguana,
-    github::craddm/eegUtils,
-    github::jaromilfrossard/permuco4brain,
-    github::jaromilfrossard/permuco
+    angeella/pARI,
+    bnicenboim/eeguana,
+    craddm/eegUtils,
+    jaromilfrossard/permuco4brain,
+    jaromilfrossard/permuco
 VignetteBuilder: knitr
 RoxygenNote: 7.1.1

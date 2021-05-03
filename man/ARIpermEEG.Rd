@@ -4,7 +4,7 @@
 \alias{ARIpermEEG}
 \title{ARI Permutation-based for EEG data}
 \usage{
-ARIpermEEG(data, alpha, family, delta, ct, alternative, timeS, dist, formula, variable, B, effect, model, ...)
+ARIpermEEG(data, alpha, family, delta, alternative, timeS, dist, formula, variable, B, effect, model, ...)
 }
 \arguments{
 \item{data}{data, default is NULL. You need to insert data or model}
@@ -14,8 +14,6 @@ ARIpermEEG(data, alpha, family, delta, ct, alternative, timeS, dist, formula, va
 \item{family}{which family for the confidence envelope? simes, finner, beta or higher.criticism. default is simes}
 
 \item{delta}{do you want to consider at least delta size set?}
-
-\item{ct}{set of thresholds}
 
 \item{alternative}{alternative hypothesis}
 
