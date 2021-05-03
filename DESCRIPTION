@@ -28,7 +28,12 @@ Imports:
     igraph,
     tidyr,
     hommel,
-    magrittr
+    magrittr,
+    pARI,
+    eeguana,
+    eegUtils,
+    permuco4brain,
+    permuco
 LinkingTo: Rcpp, RcppArmadillo
 Suggests: 
     knitr,
