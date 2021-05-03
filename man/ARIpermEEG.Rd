@@ -28,6 +28,8 @@ ARIpermEEG(data, alpha, family, delta, alternative, timeS, dist, formula, variab
 \item{B}{number of permutation, default 5000}
 
 \item{eff}{effect of interest where apply ARI}
+
+\item{permuco4brain}{model, default is NULL}
 }
 \value{
 Returns a data.frame with number of true discoveries for each cluster

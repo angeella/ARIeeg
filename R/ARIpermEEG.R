@@ -12,7 +12,7 @@
 #' @param variable variables to use in the right part of the formula
 #' @param B number of permutation, default 5000
 #' @param eff effect of interest where apply ARI
-#' @model permuco4brain model, default is NULL
+#' @param permuco4brain model, default is NULL
 #' @author Angela Andreella
 #' @return Returns a data.frame with number of true discoveries for each cluster
 #' @export

@@ -6,9 +6,9 @@ Date: 2020-04-02
 Author: Angela Andreella
 Maintainer: Who to complain to <yourfault@somewhere.net>
 Description: More about what it does (maybe more than one line)
-License: What license is it under?
+License: GPL (>= 2)
 Imports: 
-    Rcpp (>= 1.0.4), 
+    Rcpp (>= 1.0.5), 
     matrixStats, 
     Matrix,
     stats,
@@ -34,7 +34,9 @@ Imports:
     eegUtils,
     permuco4brain,
     permuco
-LinkingTo: Rcpp, RcppArmadillo
+LinkingTo: 
+    Rcpp, 
+    RcppArmadillo
 Suggests: 
     knitr,
     rmarkdown,
@@ -48,5 +50,3 @@ Remotes:
 VignetteBuilder: knitr
 RoxygenNote: 7.1.1
 Encoding: UTF-8
-LazyData: true
-env: _R_CHECK_SYSTEM_CLOCK_=0
