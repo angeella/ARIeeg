@@ -47,3 +47,6 @@ Remotes:
     jaromilfrossard/permuco
 VignetteBuilder: knitr
 RoxygenNote: 7.1.1
+Encoding: UTF-8
+LazyData: true
+env: _R_CHECK_SYSTEM_CLOCK_=0
