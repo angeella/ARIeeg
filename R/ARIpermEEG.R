@@ -13,6 +13,7 @@
 #' @param B number of permutation, default 5000
 #' @param eff effect of interest where apply ARI
 #' @param permuco4brain model, default is NULL
+#' @useDynLib ARIeeg
 #' @author Angela Andreella
 #' @return Returns a data.frame with number of true discoveries for each cluster
 #' @export
@@ -30,7 +31,7 @@
 #' @importFrom  permuco4brain brainperm
 #' @importFrom permuco4brain position_to_graph
 #' 
-ARIpermEEG <- function(data=NULL, alpha = 0.1, family = "Simes", delta = 0, alternative = "two.sided",timeS = NULL,dist = 50,formula=NULL,variable=NULL, B = 5000,eff = "condition", model = NULL,...){
+ARIpermEEG <- function(data=NULL, alpha = 0.05, family = "Simes", delta = 0, alternative = "two.sided",timeS = NULL,dist = 50,formula=NULL,variable=NULL, B = 5000,eff = "condition", model = NULL,...){
   
   if(!is.null(data) & !is.null(model)){stop("Please insert data or model object")}
   if(!is.null(data)){
