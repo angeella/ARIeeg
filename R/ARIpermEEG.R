@@ -31,7 +31,9 @@
 #' @importFrom  permuco4brain brainperm
 #' @importFrom permuco4brain position_to_graph
 #' 
-ARIpermEEG <- function(data=NULL, alpha = 0.05, family = "Simes", delta = 0, alternative = "two.sided",timeS = NULL,dist = 50,formula=NULL,variable=NULL, B = 5000,eff = "condition", model = NULL,...){
+ARIpermEEG <- function(data=NULL, alpha = 0.05, family = "Simes", delta = 0, 
+                       alternative = "two.sided",timeS = NULL,dist = 50,
+                       formula=NULL,variable=NULL, B = 5000,eff = "condition", model = NULL,...){
   
   if(!is.null(data) & !is.null(model)){stop("Please insert data or model object")}
   if(!is.null(data)){
@@ -89,16 +91,10 @@ ARIpermEEG <- function(data=NULL, alpha = 0.05, family = "Simes", delta = 0, alt
                "less" = matrixStats::colRanks(Test) / nrow(Test))
   
   
-  pvalues <-t(pvalues)
-  #pvalues <- pvalues[,which(model$multiple_comparison[[1]]$clustermass$data$cluster_id!=0)]
-  pvalues_ord <- rowSortC(pvalues)
-  lambda <- lambdaOpt(pvalues = t(pvalues_ord), family = family, alpha = alpha, delta = delta) 
-  cvOpt = criticalVector(pvalues = t(pvalues_ord), family = family, alpha = alpha, lambda= lambda, delta = delta)
-  if(is.unsorted(cvOpt)){
-    idS = which(sapply(c(1:length(cvOpt)), function(x) is.unsorted(cvOpt[1:x])))[1]
-    cvOpt = c(cvOpt[1:(idS-1)], rep(length(cvOpt)-1, max(cvOpt[1:(idS-1)])))  
-    
-  }
+  lambda <- lambdaOpt(pvalues = pvalues, family = family, alpha = alpha, delta = delta) 
+  cvOpt = criticalVector(pvalues = pvalues, family = family, 
+                         alpha = alpha, lambda= lambda, delta = delta)
+
  #clstr_id <- model$multiple_comparison[[1]]$clustermass$data$cluster_id[which(model$multiple_comparison[[1]]$clustermass$data$cluster_id!=0)]
   clstr_id <- eval(parse(text=paste0("model$multiple_comparison$", eff, "$clustermass$data$cluster_id")))
   
@@ -110,15 +106,9 @@ ARIpermEEG <- function(data=NULL, alpha = 0.05, family = "Simes", delta = 0, alt
   out=lapply(clusters,function(i){
     ix= which(clstr_id == i)
     
-    #cluster_ids=which(ix,arr.ind = TRUE)
-    #cluster_ids=cbind(cluster_ids,Stat=StatFun(ix))
-    #Error if I put pvalues[,mask] instead of pvalues in SingleStepCT
-    #perm <- SingleStepCT(pvalues = pvalues,ct =ct, ix =as.vector(which(ix[mask])), alpha = alpha, shift = shift, family = 'Simes', lambda = lambda)
-    #perm <- discoveriesPerm(praw = praw, ix = ix[mask], cvh = cvh)
     summary_cluster_eeg(clusters = i,model = model, 
                         cv = cvOpt,ix=ix,pvalues = pvalues, eff = eff)
-    #summary_hommel_eeg(hommel = hom,ix=ix, alpha = 0.1, clusters = i)
-    
+
   
   })
   

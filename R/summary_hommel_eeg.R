@@ -15,7 +15,7 @@
 
 summary_hommel_eeg <- function(hommel,ix,alpha, clusters,eff){
   Total=length(hommel@p[ix])
-  False_Null= discoveries(hommel, alpha=alpha, ix=ix)
+  False_Null= discoveries(hommel = hommel, ix = ix, alpha = 0.05)
   True_Null=Total-False_Null
   Active_Proportion= False_Null/Total
   clustermass <- eval(parse(text=paste0("model$multiple_comparison$", eff, "$clustermass$cluster$clustermass[clusters]")))

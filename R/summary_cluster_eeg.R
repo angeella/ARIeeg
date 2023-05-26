@@ -16,9 +16,9 @@
 
 
 summary_cluster_eeg <- function(clusters,model,cv,ix,pvalues,eff){
-  p <- pvalues[1,ix]
+  p <- pvalues[ix,1]
   Total = length(p)
-  False_Null= dI(ix = ix,cv = cv,praw = pvalues[1,])
+  False_Null= dI(ix = ix,cv = cv,pvalues = pvalues)
   True_Null=Total - False_Null
   Active_Proportion= False_Null / Total
   #info <- eval(parse(text=paste0("model$multiple_comparison$", effect, "$clustermass$cluster")))
